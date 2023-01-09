@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import styled from 'styled-components';
+import {Header, Table, Tabs} from './components';
+import data from './fe_data.json';
 
-function App() {
+const {api, method, path, request, response} = data;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: ${({theme: {colors: {white}}}) => white};
+  color: ${({theme: {colors: {black}}}) => black};
+`
+
+const Divider = styled.hr`
+  display: flex;
+  margin: 24px 12px;
+  border-width: .5px;
+  border-color: ${({theme: {colors: {brightGray}}}) => brightGray};
+`
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      <Header {...{api, method, path}} />
+      <Divider />
+      <Tabs tabs={[
+        {title: 'Request', content: <Table data={request} />},
+        {title: 'Response', content: <Table data={response} />},
+      ]} />
+    </Container>
   );
 }
 
