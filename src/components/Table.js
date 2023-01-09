@@ -52,7 +52,7 @@ const TypeColumn = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 24px;
+  padding: 4px 28px;
   font-size: 13px;
   font-weight: bold;
   background-color: ${({theme: {colors: {columbiaBlue}}}) => columbiaBlue};

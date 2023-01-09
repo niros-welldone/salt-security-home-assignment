@@ -12,8 +12,8 @@ const Row = styled.div`
   display: flex;
   align-items: center;
   align-self: flex-start;
+  cursor: pointer;
   :hover {
-    cursor: pointer;
     opacity: .8;
   }
 `
@@ -27,7 +27,7 @@ const Expand = styled.div`
   border-radius: 50%;
   background-color: ${({theme: {colors: {brightGray}}}) => brightGray};
   svg {
-    fill: ${({theme: {colors: {metallicViolet}}}) => metallicViolet};
+    fill: ${({theme: {colors: {deepFuchsia}}}) => deepFuchsia};
   }
 `
 

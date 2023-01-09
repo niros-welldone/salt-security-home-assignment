@@ -18,7 +18,7 @@ const InputWrapper = styled.div`
   display: flex;
   background-color: ${({theme: {colors: {white}}}) => white};
   align-items: center;
-  height: 60px;
+  height: 50px;
   svg {
     fill: ${({theme: {colors: {graniteGrey}}}) => graniteGrey};
     margin: 0 12px;

@@ -11,7 +11,7 @@ const Container = styled.div`
 const TabsWrapper = styled.div`
   display: flex;
   align-items: center;
-   border-bottom: .5px solid ${({theme: {colors: {graniteGrey}}}) => graniteGrey};
+  border-bottom: .5px solid ${({theme: {colors: {graniteGrey}}}) => graniteGrey};
 `
 
 const TabContent = styled.div`
