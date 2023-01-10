@@ -72,7 +72,7 @@ const LinkButton = styled.div`
   ${hover};
 `
 
-const TableFilters = ({defaultFilters, filters, setFilters}) => {
+const TableFilters = ({defaultFilters, filters, setFilters, context}) => {
   const [tempFilters, setTempFilters] = useState(filters);
 
   const isDiff = useMemo(() => (JSON.stringify(filters) !== JSON.stringify(tempFilters)), [filters, tempFilters]);
@@ -97,8 +97,8 @@ const TableFilters = ({defaultFilters, filters, setFilters}) => {
           <Input placeholder="Search" value={tempFilters.search} onChange={({target: {value}}) => onFilterChange(value, 'search')} />
           <Separator />
           <CheckboxWrapper>
-            <input type="checkbox" id="pii" checked={tempFilters.isPII} onChange={({target: {checked}}) => onFilterChange(checked, 'isPII')} />
-            <label htmlFor="pii">Show PII only</label>
+            <input type="checkbox" id={`${context}-pii`} checked={tempFilters.isPII} onChange={({target: {checked}}) => onFilterChange(checked, 'isPII')} />
+            <label htmlFor={`${context}-pii`}>Show PII only</label>
           </CheckboxWrapper>
           <Button onClick={onApply} isDiff={isDiff}>Apply</Button>
         </InputWrapper>

@@ -26,8 +26,8 @@ const App = () => {
       <Header {...{api, method, path}} />
       <Divider />
       <Tabs tabs={[
-        {title: 'Request', content: <Table data={request} />},
-        {title: 'Response', content: <Table data={response} />},
+        {title: 'Request', content: <Table data={request} context="request" />},
+        {title: 'Response', content: <Table data={response} context="response" />},
       ]} />
     </Container>
   );

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import styled from 'styled-components';
 import {TableFilters, Group} from '../components';
 
@@ -37,7 +37,7 @@ const Cell = styled.div`
 `
 
 const TableRow = styled.div`
-  display: flex;
+  display: ${({isVisible}) => (isVisible ? 'flex' : 'none')};
   align-items: center;
   box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0, rgba(60, 64, 67, 0.15) 0 2px 6px 2px;
   margin: 12px 0;
@@ -97,10 +97,16 @@ const columns = {
   },
 }
 
-const Table = ({data}) => {
+const Table = ({data, context}) => {
   const defaultFilters = useMemo(() => ({search: '', isPII: false}), []);
   const [filters, setFilters] = useState(defaultFilters);
-  const [tableData, setTableData] = useState({});
+  const [tableData, setTableData] = useState(data);
+
+  const onToggleButton = useCallback((group, index, field) => {
+    const newData = JSON.parse(JSON.stringify(tableData));
+    newData[group][index][field] = !newData[group][index][field];
+    setTableData(newData);
+  }, [tableData])
 
   const onFilter = useCallback(({name, pii, type}) => {
     const searchFilter = `${name}${type}`.toLowerCase().includes(filters.search.toLowerCase());
@@ -108,23 +114,9 @@ const Table = ({data}) => {
     return searchFilter && piiFilter;
   }, [filters]);
 
-  const onToggleButton = useCallback((group, index, field) => {
-    const newTableData = {...tableData};
-    newTableData[group][index][field] = !newTableData[group][index][field];
-    setTableData(newTableData);
-  }, [tableData])
-
-  useEffect(() => {
-    const filteredData = {...data};
-    Object.keys(filteredData).forEach((key) => {
-      filteredData[key] = filteredData[key].filter(onFilter);
-    })
-    setTableData(filteredData);
-  }, [data, onFilter]);
-
   return (
       <Container>
-        <TableFilters {...{defaultFilters, filters, setFilters}} />
+        <TableFilters {...{defaultFilters, filters, setFilters, context}} />
         <TableWrapper>
           <TableHeader>
             {Object.keys(columns).map((key) => (
@@ -135,7 +127,7 @@ const Table = ({data}) => {
             {Object.keys(tableData).map((key) => (
                 <Group key={key} title={key}>
                   {tableData[key].map((tr, index) => (
-                      <TableRow key={index}>
+                      <TableRow key={index} isVisible={onFilter(tr)}>
                         {Object.keys(tr).map((field) => (
                             <Cell key={field} width={columns[field].width}>
                               {columns[field].renderer(tr[field], () => onToggleButton(key, index, field))}

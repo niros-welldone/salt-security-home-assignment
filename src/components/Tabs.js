@@ -15,6 +15,7 @@ const TabsWrapper = styled.div`
 `
 
 const TabContent = styled.div`
+  display: ${({isActive}) => (!isActive && 'none')};
   height: 100%;
   background-color: ${({theme: {colors: {brightGray}}}) => brightGray};
   padding: 24px;
@@ -45,9 +46,11 @@ const Tabs = ({tabs}) => {
               <Tab key={index} isSelected={tab === index} onClick={() => setTab(index)}>{title}</Tab>
           ))}
         </TabsWrapper>
-        <TabContent>
-          {tabs[tab].content}
-        </TabContent>
+        {tabs.map(({content}, index) => (
+            <TabContent key={index} isActive={tab === index}>
+              {content}
+            </TabContent>
+        ))}
       </Container>
   );
 }
