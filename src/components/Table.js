@@ -37,7 +37,7 @@ const Cell = styled.div`
 `
 
 const TableRow = styled.div`
-  display: ${({isVisible}) => (isVisible ? 'flex' : 'none')};
+  display: flex;
   align-items: center;
   box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0, rgba(60, 64, 67, 0.15) 0 2px 6px 2px;
   margin: 12px 0;
@@ -64,7 +64,6 @@ const PIIButton = styled(TypeColumn)`
   border: 2px solid ${({theme: {colors: {coolBlack}}}) => coolBlack};
   background-color: ${({checked, theme: {colors: {coolBlack, white}}}) => (checked ? coolBlack : white)};
   color: ${({checked, theme: {colors: {coolBlack, white}}}) => (checked ? white : coolBlack)};
-  
   cursor: pointer;
   opacity: .8;
 `
@@ -80,30 +79,36 @@ const MaskingButton = styled(TypeColumn)`
 const columns = {
   name: {
     title: 'NAME',
+    isToggle: false,
     renderer: (value) => <NameColumn>{value}</NameColumn>
   },
   pii: {
     title: 'PII',
     width: '10vw',
+    isToggle: true,
     renderer: (value, onToggleButton) => <PIIButton checked={value} onClick={onToggleButton}>PII</PIIButton>
   },
   masked: {
     title: 'MASKING',
+    isToggle: true,
     renderer: (value, onToggleButton) => <MaskingButton checked={value} onClick={onToggleButton}>MASKED</MaskingButton>
   },
   type: {
     title: 'TYPE',
+    isToggle: false,
     renderer: (value) => <TypeColumn>{value}</TypeColumn>
   },
 }
 
 const Table = ({data, context}) => {
+  const withIds = useMemo(() => Object.keys(data).reduce((acc, cur) => ({...acc, [cur]: data[cur].map((item, id) => ({...item, id}))}), {}), [data])
   const defaultFilters = useMemo(() => ({search: '', isPII: false}), []);
   const [filters, setFilters] = useState(defaultFilters);
-  const [tableData, setTableData] = useState(data);
+  const [tableData, setTableData] = useState(withIds);
 
-  const onToggleButton = useCallback((group, index, field) => {
+  const onToggleButton = useCallback((group, id, field) => {
     const newData = JSON.parse(JSON.stringify(tableData));
+    const index = newData[group].findIndex((item) => item.id === id);
     newData[group][index][field] = !newData[group][index][field];
     setTableData(newData);
   }, [tableData])
@@ -126,12 +131,14 @@ const Table = ({data, context}) => {
           <TableBody>
             {Object.keys(tableData).map((key) => (
                 <Group key={key} title={key}>
-                  {tableData[key].map((tr, index) => (
-                      <TableRow key={index} isVisible={onFilter(tr)}>
+                  {tableData[key].filter(onFilter).map((tr, index) => (
+                      <TableRow key={index}>
                         {Object.keys(tr).map((field) => (
-                            <Cell key={field} width={columns[field].width}>
-                              {columns[field].renderer(tr[field], () => onToggleButton(key, index, field))}
-                            </Cell>
+                            (columns[field]) && (
+                                <Cell key={field} width={columns[field].width}>
+                                  {columns[field].renderer(tr[field], columns[field].isToggle ? () => onToggleButton(key, tr.id, field) : undefined)}
+                                </Cell>
+                            )
                         ))}
                       </TableRow>
                   ))}
